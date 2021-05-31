@@ -16,3 +16,21 @@ cells (subcluster labels as presented in Fig. 2D).
 The file `alldata_batch_info.tsv` gives information on batch/treatment for each
 cell.
 
+Here is some brief code to load these data into a `Seurat` object in `R`:
+
+```r
+library(tidyverse)
+library(Seurat)
+mat <- data.table::fread("full_count_matrix.tsv") %>%
+    as.data.frame() %>% column_to_rownames("V1")
+subclusters <- read_tsv("alldata_subcluster_labels.tsv") %>%
+    as.data.frame() %>% column_to_rownames("cell_id")
+batch <- read_tsv('alldata_batch_info.tsv') %>%
+    as.data.frame() %>%	column_to_rownames("cell_id")
+obj <- CreateSeuratObject(mat)
+obj <- AddMetaData(obj, batch)
+obj <- AddMetaData(obj, subclusters)
+```
+
+This should give you an object of 17,170 gene expression levels measured in 29,615 cells.
+
